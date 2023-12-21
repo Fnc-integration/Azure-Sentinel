@@ -120,7 +120,7 @@
                     "durationMs": 86400000
                   },
                   "value": {
-                    "durationMs": 259200000
+                    "durationMs": 1209600000
                   }
                 },
                 {
@@ -239,7 +239,7 @@
                   },
                   "queryType": 0,
                   "resourceType": "microsoft.operationalinsights/workspaces",
-                  "value": "Access to a Potentially Vulnerable Web Application"
+                  "value": null
                 }
               ],
               "style": "pills",
@@ -252,7 +252,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "Fortinet_FortiNDR_Cloud\n| where Type == 'FncEventsSuricata_CL'\n| where  Timestamp between ({TimeRange:start} .. {TimeRange:end})\n| where isempty('{Category}') or (AlertCategory == '{Category}')",
+              "query": "Fortinet_FortiNDR_Cloud\n| where Type == 'FncEventsSuricata_CL'\n| where  Timestamp between ({TimeRange:start} .. {TimeRange:end})\n| where isempty('{Category}') or (AlertCategory == '{Category}')\n| project TimeGenerated, DstIpEnrichmentsAnnotationsTags, SrcIpEnrichmentsAnnotationTags, HttpRefer, Intel, SrcIpEnrichmentsGeoSubdivision, SrcIpEnrichmentsGeoCity, SrcIpEnrichmentsAnnotationsApplications, SrcIpEnrichmentsAnnotationsEnvironments, SrcIpEnrichmentsAnnotationsLocation, HttpHostnameEnrichmentsIpEnrichmentsGeoCountry, HttpHostnameEnrichmentsIpEnrichmentsGeoSubdivision, HttpHostnameEnrichmentsIpEnrichmentsGeoCity,  HttpHostnameEnrichmentsIpEnrichmentsAsnAsn,  HttpHostnameEnrichmentsIpEnrichmentsAsnOrg, HttpHostnameEnrichmentsIpEnrichmentsAsnIsp, HttpHostnameEnrichmentsIpEnrichmentsAsnAsnOrg, HttpHostnameEnrichmentsIpEnrichmentsInternal, HttpHostnameEnrichmentsIpEnrichmentsGeoLocation, HttpRedirect, SrcIpEnrichmentsGeoCountry, SrcIpEnrichmentsAsnAsn, SrcIpEnrichmentsAsnOrg, SrcIpEnrichmentsAsnIsp, SrcIpEnrichmentsAsnAsnOrg, Timestamp, UUID, EventType, CustomerId, SensorId, Source, SrcIp, SrcIpEnrichmentsInternal, SrcPort, DesIp, DstIpEnrichmentsInternal, DstIpEnrichmentsGeoCountry, DstIpEnrichmentsGeoSubdevision, DstIpEnrichmentsGeoCity, DstIpEnrichmentsAsnAsn, DstIpEnrichmentsAsnOrg, DstIpEnrichmentsAsnIsp, DstIpEnrichmentsAsnAsnOrg, GeoDistance, Destport, Protoco, AlertSignatureId, AlertRev, AlertSignature, AlertCategory, AlertSeverity, HttpStatus, HttpProtoco, HttpUrl, HttpHostname,  HttpHostnameEnrichmentsDomainEnrichmentsDomainEntropy, HttpLength, HttpMethod, HttpContentType, HttpUserAgent, Payload, DstIpEnrichmentsAnnotationsApplications, DstIpEnrichmentsAnnotationsEnvironments, DstIpEnrichmentsAnnotationsLocations, Type",
               "size": 0,
               "showAnalytics": true,
               "title": "FNC Suricata List",
@@ -369,7 +369,7 @@
                     "durationMs": 86400000
                   },
                   "value": {
-                    "durationMs": 259200000
+                    "durationMs": 2419200000
                   }
                 }
               ],
@@ -525,13 +525,10 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "Fortinet_FortiNDR_Cloud\n| where Type == 'FncEventsObservation_CL'\n| where Timestamp between({TimeRange:start} .. {TimeRange:end})\n| where Confidence in ({Confidence})\n| where isempty('{Sensor_ID}') or (SensorId == '{Sensor_ID}')",
+              "query": "Fortinet_FortiNDR_Cloud\n| where Type == 'FncEventsObservation_CL'\n| where Timestamp between({TimeRange:start} .. {TimeRange:end})\n| where Confidence in ({Confidence})\n| where isempty('{Sensor_ID}') or (SensorId == '{Sensor_ID}')\n| project TimeGenerated, Category, Intel, DstIpEnrichmentsGeoCountry,  DstIpEnrichmentsGeoSubdivision, DstIpEnrichmentsGeoCity, DstIpEnrichmentsAsnAsn, DstIpEnrichmentsAsnOrg,  DstIpEnrichmentsAsnIsp, DstIpEnrichmentsAsnAsnOrg, Timestamp, UUId, EventType, CustomerId, SensorId, Source, EvidenceStartTimestamp, EvidenceEndTimestamp, ObservationUUID, Title, Confidence, SrcIp, SrcIpEnrichmentsInternal, DstIp, DstIpEnrichmentsInternal, DstIpEnrichmentsAnnotationsApplications, DstIpEnrichmentsAnnotationsTags, GeoDistance, SensorIds, EvidenceIQL, Context, Description, Class, Type",
               "size": 0,
               "showAnalytics": true,
               "title": "FNC Observation List",
-              "timeContext": {
-                "durationMs": 86400000
-              },
               "showRefreshButton": true,
               "showExportToExcel": true,
               "exportToExcelOptions": "all",
@@ -632,7 +629,7 @@
                     "durationMs": 86400000
                   },
                   "value": {
-                    "durationMs": 604800000
+                    "durationMs": 2419200000
                   }
                 },
                 {
@@ -663,12 +660,10 @@
                   "version": "KqlParameterItem/1.0",
                   "name": "Category",
                   "type": 2,
-                  "query": "FncEventsDetections_CL\n| summarize by Category\n| order by Category asc",
+                  "query": "FncEventsDetections_CL\n| summarize by rule_category_s\n| order by rule_category_s asc",
                   "typeSettings": {
-                    "additionalResourceOptions": []
-                  },
-                  "timeContext": {
-                    "durationMs": 86400000
+                    "additionalResourceOptions": [],
+                    "showDefault": false
                   },
                   "queryType": 0,
                   "resourceType": "microsoft.operationalinsights/workspaces",
@@ -685,7 +680,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "\nFortinet_FortiNDR_Cloud\n| where Type == 'FncEventsDetections_CL'\n| where Created between ({TimeRange:start} .. {TimeRange:end})\n| where Severity in ({Severity})\n| where isempty('{Category}') or (Category == '{Category}')\n| summarize Count = count() by Severity, Confidence,  bin(Timestamp, 1d)\n| render barchart",
+              "query": "\nFortinet_FortiNDR_Cloud\n| where Type == 'FncEventsDetections_CL'\n| where Created between ({TimeRange:start} .. {TimeRange:end})\n| where Severity in ({Severity})\n| where isempty('{Category}') or (Category == '{Category}')\n| summarize Count = count() by Severity, Confidence,  bin(Created, 1d)\n| render barchart",
               "size": 0,
               "showAnalytics": true,
               "title": "Detection Severity Chart",
@@ -782,7 +777,7 @@
                     "durationMs": 86400000
                   },
                   "value": {
-                    "durationMs": 604800000
+                    "durationMs": 2419200000
                   }
                 },
                 {
@@ -814,12 +809,10 @@
                   "version": "KqlParameterItem/1.0",
                   "name": "Category",
                   "type": 2,
-                  "query": "FncEventsDetections_CL\n| summarize by Category\n| order by Category asc",
+                  "query": "FncEventsDetections_CL\n| summarize by rule_category_s\n| order by rule_category_s asc",
                   "typeSettings": {
-                    "additionalResourceOptions": []
-                  },
-                  "timeContext": {
-                    "durationMs": 86400000
+                    "additionalResourceOptions": [],
+                    "showDefault": false
                   },
                   "queryType": 0,
                   "resourceType": "microsoft.operationalinsights/workspaces",
@@ -836,7 +829,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "Fortinet_FortiNDR_Cloud\n| where Type == 'FncEventsDetections_CL'\n| where Created between ({TimeRange:start} .. {TimeRange:end})\n| where Confidence in ({Confidence})\n| where isempty('{Category}') or (Category == '{Category}')\n| summarize Count = count() by Confidence,  bin(Timestamp, 1d)\n| render barchart",
+              "query": "Fortinet_FortiNDR_Cloud\n| where Type == 'FncEventsDetections_CL'\n| where Created between ({TimeRange:start} .. {TimeRange:end})\n| where Confidence in ({Confidence})\n| where isempty('{Category}') or (Category == '{Category}')\n| summarize Count = count() by Confidence,  bin(Created, 1d)\n| render barchart",
               "size": 0,
               "showAnalytics": true,
               "title": "Detection Confidence Chart",
@@ -985,13 +978,35 @@
                   "version": "KqlParameterItem/1.0",
                   "name": "Category",
                   "type": 2,
-                  "query": "FncEventsDetections_CL\n| summarize by Category\n| order by Category asc",
+                  "query": "FncEventsDetections_CL\n| summarize by rule_category_s\n| order by rule_category_s asc",
                   "typeSettings": {
-                    "additionalResourceOptions": []
+                    "additionalResourceOptions": [],
+                    "showDefault": false
                   },
                   "queryType": 0,
                   "resourceType": "microsoft.operationalinsights/workspaces",
                   "value": null
+                },
+                {
+                  "id": "876e2140-cacb-4d7c-88ed-354ecd7e86a2",
+                  "version": "KqlParameterItem/1.0",
+                  "name": "RuleNames",
+                  "type": 2,
+                  "isRequired": true,
+                  "multiSelect": true,
+                  "quote": "'",
+                  "delimiter": ",",
+                  "query": "FncEventsDetections_CL\n| summarize by rule_name_s\n| order by rule_name_s asc",
+                  "typeSettings": {
+                    "additionalResourceOptions": [
+                      "value::all"
+                    ],
+                    "selectAllValue": "",
+                    "showDefault": false
+                  },
+                  "defaultValue": "value::all",
+                  "queryType": 0,
+                  "resourceType": "microsoft.operationalinsights/workspaces"
                 }
               ],
               "style": "pills",
@@ -1004,7 +1019,7 @@
             "type": 3,
             "content": {
               "version": "KqlItem/1.0",
-              "query": "Fortinet_FortiNDR_Cloud\n| where Type == 'FncEventsDetections_CL'\n| where Created between ({TimeRange:start} .. {TimeRange:end})\n| where Severity in ({Severity})\n| where Confidence in ({Confidence})\n| where isempty('{Category}') or (Category == '{Category}')\n| sort by FirstSeen desc\n",
+              "query": "Fortinet_FortiNDR_Cloud\n| where Type == 'FncEventsDetections_CL'\n| where Created between ({TimeRange:start} .. {TimeRange:end})\n| where Severity in ({Severity})\n| where Confidence in ({Confidence})\n| where Rule_Name in ({RuleNames})\n| where isempty('{Category}') or (Category == '{Category}')\n| sort by Created desc\n| project TimeGenerated, UUID, Device_IP, Event_Count, Indicators, First_Seen, Last_Seen, Created, Updated, Status, Muted, Mute_Comment, Severity, Confidence,  Resolution, Date_Resolved, Account_UUID, Sensor_ID, Rule_Name, Rule_UUID, Rule_Muted, Category, Type\n\n",
               "size": 0,
               "showAnalytics": true,
               "title": "FNC Detection List",
@@ -1036,8 +1051,8 @@
     }
   ],
   "fallbackResourceIds": [
-    "/subscriptions/87664ba6-1632-48ca-bf90-b1c01a42eba4/resourcegroups/fnc/providers/microsoft.operationalinsights/workspaces/bobbytest1"
+    "/subscriptions/3f4a7f4a-5e8a-408f-8b5b-c8bfeb836628/resourcegroups/fortindrcloud/providers/microsoft.operationalinsights/workspaces/fortindrcloud-dev"
   ],
-  "fromTemplateId": "https://sentinelus.hosting.portal.azure.net/sentinelus/Content/1.0.02484.3403-231021-003920/Scenarios/Ecosystem/Content/Workbooks/CustomWorkbook.json",
+  "fromTemplateId": "sentinel-FortiNdrCloud",
   "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
 }

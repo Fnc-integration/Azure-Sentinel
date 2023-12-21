@@ -2,8 +2,9 @@ import logging
 import os
 from datetime import datetime, timezone
 
-from metastream import fetch_detections, fetch_events
+from metastream import fetch_events
 from metastream.s3_client import Context
+from fortiNdrCloudRestAPI import _fetch_detections_checkpoint
 from sentinel import post_data
 
 AWS_ACCESS_KEY = os.environ.get('AwsAccessKeyId')
@@ -44,10 +45,6 @@ def fetch_and_send_events(ctx: Context, event_type: str, start_date: datetime):
 
 
 def fetch_and_send_detections(ctx: Context, event_type: str, start_date: datetime):
-    for events in fetch_detections(context=ctx,
-                               name='sentinel',
-                               account_code=ACCOUNT_CODE,
-                               start_date=start_date,
-                               access_key=AWS_ACCESS_KEY,
-                               secret_key=AWS_SECRET_KEY):
-        post_data(events, event_type) 
+    detections = _fetch_detections_checkpoint(context = ctx, start_date = start_date)['detections']
+    
+    post_data(detections, 'detections')

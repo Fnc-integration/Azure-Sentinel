@@ -1,14 +1,17 @@
 import logging
 import os
-from datetime import date, datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone, time
 
-from metastream import fetch_detections_by_day, fetch_events_by_day
+from metastream import fetch_events_by_day
 from metastream.s3_client import Context
+from fortiNdrCloudRestAPI import _fetch_detections_by_checkpoint
 from sentinel.sentinel import post_data
 
 AWS_ACCESS_KEY = os.environ.get('AwsAccessKeyId')
 AWS_SECRET_KEY = os.environ.get('AwsSecretAccessKey')
 ACCOUNT_CODE = os.environ.get("FncAccountCode")
+ACCOUNT_UUID = os.environ.get('FncAccountUUID')
+API_TOKEN = os.environ.get('FncApiToken')
 
 def main(args: dict) -> str:
     events = args.get('events', [])
@@ -19,7 +22,7 @@ def main(args: dict) -> str:
         logging.info(f'FetchAndSendByDayActivity: event: {event_type} day: {start_day.date()}')
 
         if event_type == 'detections':
-            fetch_and_send_detections(ctx, event_type, start_day.date())
+            fetch_and_send_detections(start_day.date())
         else:
             fetch_and_send_events(ctx, event_type, start_day)
 
@@ -38,11 +41,8 @@ def fetch_and_send_events(ctx: Context, event_type: str, start_day: datetime):
         post_data(events, event_type)
 
 
-def fetch_and_send_detections(ctx: Context, event_type: str, start_day: date):
-    for events in fetch_detections_by_day(context=ctx,
-                                          name='sentinel',
-                                          account_code=ACCOUNT_CODE,
-                                          day=start_day,
-                                          access_key=AWS_ACCESS_KEY,
-                                          secret_key=AWS_SECRET_KEY):
-        post_data(events, event_type)
+
+def fetch_and_send_detections(start_day: date):
+    detections =  _fetch_detections_by_checkpoint(start_day = start_day)['detections']
+
+    post_data(detections, 'detections')

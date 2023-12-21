@@ -1,7 +1,7 @@
 {
 	"publisherId": "azuresentinel",
 	"offerId": "azure-sentinel-solution-fortindrcloud",
-	"firstPublishDate": "2023-11-15",
+	"firstPublishDate": "2023-12-15",
 	"providers": ["Microsoft"],
 	"categories": {
 		"domains" : ["Security - Automation (SOAR)"],

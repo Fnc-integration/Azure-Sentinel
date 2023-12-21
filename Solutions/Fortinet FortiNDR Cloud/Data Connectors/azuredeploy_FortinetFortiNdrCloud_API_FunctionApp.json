@@ -8,45 +8,53 @@
             "maxLength": 20,
             "type": "string"
         },
-          "WorkspaceId": {
-              "type": "string",
-              "defaultValue": "<WorkspaceId>"
-          },
-          "WorkspaceKey": {
-              "type": "securestring",
-              "defaultValue": "<workspaceKey>"
-          },
-          "AwsAccessKeyId": {
-              "type": "string",
-              "defaultValue": "<AwsAccessKeyId>"
-          },
-          "AwsSecretAccessKey": {
-              "type": "securestring",
-              "defaultValue": "<AwsSecretAccessKey>"
-          },
-          "FncAccountCode": {
-              "type": "string",
-              "defaultValue": "<enter the FortiNDR Cloud account code here>"
-          },
-          "FncEvents": {
+        "WorkspaceId": {
+            "type": "string",
+            "defaultValue": "<WorkspaceId>"
+        },
+        "WorkspaceKey": {
+            "type": "securestring",
+            "defaultValue": "<workspaceKey>"
+        },
+        "AwsAccessKeyId": {
+            "type": "string",
+            "defaultValue": "<AwsAccessKeyId>"
+        },
+        "AwsSecretAccessKey": {
+            "type": "securestring",
+            "defaultValue": "<AwsSecretAccessKey>"
+        },
+        "FncAccountCode": {
+            "type": "string",
+            "defaultValue": "<enter the FortiNDR Cloud account code here>"
+        },
+        "FncEvents": {
             "type": "string",
             "defaultValue": "observation"
         },
-          "FncDetections": {
+        "FncDetections": {
             "type": "bool",
             "defaultValue": true
         },
-          "FncTerminateApp": {
+        "FncTerminateApp": {
             "type": "bool",
             "defaultValue": false
         },
-          "FncDaysToCollect": {
+        "FncDaysToCollect": {
             "type": "int",
             "defaultValue": 0
         },
-          "FncIntervalMinutes": {
+        "FncIntervalMinutes": {
             "type": "int",
             "defaultValue": 5
+        },
+         "FncAccountUUID": {
+            "type": "string",
+            "defaultValue": "<enter the FortiNDR Cloud account UUID here>"
+        },
+         "FncApiToken": {
+            "type": "string",
+            "defaultValue": "<enter the FortiNDR Cloud account API Token here>"
         }
       },
       "variables": {
@@ -209,6 +217,8 @@
                           "FncTerminateApp": "[parameters('FncTerminateApp')]",
                           "FncDaysToCollect": "[parameters('FncDaysToCollect')]",
                           "FncIntervalMinutes": "[parameters('FncIntervalMinutes')]",
+                          "FncAccountUUID": "[parameters('FncAccountUUID')]",
+                          "FncApiToken": "[parameters('FncApiToken')]",
                           "logAnalyticsUri": "[variables('LogAnalyticsUri')]",
                           "WEBSITE_RUN_FROM_PACKAGE": "<add link to zip>"
                       } 

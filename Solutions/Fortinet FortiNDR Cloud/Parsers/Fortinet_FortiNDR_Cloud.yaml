@@ -1,4 +1,4 @@
-id: 4c846775-c295-421f-9275-ded657b190d6
+id: b076c3f9-604d-4ad5-9194-edf6e53fd66b
 Function:
   Title: Parser for Fortinet_FortiNDR_Cloud
   Version: '1.0.0'
@@ -148,6 +148,7 @@ FunctionQuery: |
             DstIpEnrichmentsAnnotationsLocations,
             Type
     };
+
     let FortiNDR_Cloud_observation_view = view () {
         FncEventsObservation_CL
         | extend
@@ -226,66 +227,55 @@ FunctionQuery: |
             Class,
             Type
     };
+
     let FortiNDR_Cloud_detections_view = view () {
         FncEventsDetections_CL
         | extend
-            PrimaryDhcpMachostPairs=column_ifexists('primary_dhcp_machost_pairs_s', ''),
-            OtherDhcpMachostPairs=column_ifexists('other_dhcp_machost_pairs_s', ''),
-            Vendor=column_ifexists('vendor_s', ''),
-            Product=column_ifexists('product_s', ''),
-            SignalVersion=column_ifexists('signal_version_s', ''),
-            EventType=column_ifexists('event_type_s', ''),
-            Subject=column_ifexists('subject_s', ''),
-            Timestamp=column_ifexists('timestamp_t', ''),
-            DeviceIp=column_ifexists('device_ip_s', ''),
-            Name=column_ifexists('name_s', ''),
-            Severity=column_ifexists('severity_s', ''),
-            Confidence=column_ifexists('confidence_s', ''),
-            SensorId=column_ifexists('sensor_id_s', ''),
+            Date_Resolved=column_ifexists('resolution_timestamp_t', ''),
+            Resolution=column_ifexists('resolution_s', ''),
+            Account_UUID=column_ifexists('account_uuid_g', ''),
+            Event_Count=column_ifexists('event_count_d', ''),
+            Rule_Name=column_ifexists('rule_name_s', ''),
+            Severity=column_ifexists('rule_severity_s', ''),
+            Confidence=column_ifexists('rule_confidence_s', ''),
+            Category=column_ifexists('rule_category_s', ''),
+            Device_IP=column_ifexists('device_ip_s', ''),
+            Sensor_ID=column_ifexists('sensor_id_s', ''),
             Muted=column_ifexists('muted_b', ''),
-            MutedRule=column_ifexists('muted_rule_b', ''),
-            RuleUUID=column_ifexists('rule_uuid_g', ''),
-            MutedComment=column_ifexists('muted_comment_s', ''),
-            FirstSeen=column_ifexists('first_seen_t', ''),
-            LastSeen=column_ifexists('last_seen_t', ''),
+            Rule_Muted=column_ifexists('muted_rule_b', ''),
+            Rule_UUID=column_ifexists('rule_uuid_g', ''),
+            Mute_Comment=column_ifexists('muted_comment_s', ''),
+            First_Seen=column_ifexists('first_seen_t', ''),
+            Last_Seen=column_ifexists('last_seen_t', ''),
             Created=column_ifexists('created_t', ''),
             Updated=column_ifexists('updated_t', ''),
             UUID=column_ifexists('uuid_g', ''),
             Status=column_ifexists('status_s', ''),
-            Indicators=column_ifexists('indicators_s', ''),
-            CustomerId=column_ifexists('customer_id_s', ''),
-            PrimaryPdnsHostnames=column_ifexists('primary_pdns_hostnames_s', ''),
-            OtherPdnsHostnames=column_ifexists('other_pdns_hostnames_s', '')
+            Indicators=column_ifexists('indicators_s', '')
         | project
             TimeGenerated,
-            Category,
             Type,
-            PrimaryDhcpMachostPairs,
-            OtherDhcpMachostPairs,
-            Vendor,
-            Product,
-            SignalVersion,
-            EventType,
-            Subject,
-            Timestamp,
-            DeviceIp,
-            Name,
+            Date_Resolved,
+            Resolution,
+            Account_UUID,
+            Event_Count,
+            Rule_Name,
             Severity,
             Confidence,
-            SensorId,
+            Category,
+            Device_IP,
+            Sensor_ID,
             Muted,
-            MutedRule,
-            RuleUUID,
-            MutedComment,
-            FirstSeen,
-            LastSeen,
+            Rule_Muted,
+            Rule_UUID,
+            Mute_Comment,
+            First_Seen,
+            Last_Seen,
             Created,
             Updated,
             UUID,
             Status,
-            Indicators,
-            CustomerId,
-            PrimaryPdnsHostnames,
-            OtherPdnsHostnames
+            Indicators
     };
+
     union isfuzzy=true FortiNDR_Cloud_suricata_view, FortiNDR_Cloud_observation_view, FortiNDR_Cloud_detections_view

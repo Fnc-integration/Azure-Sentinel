@@ -111,7 +111,7 @@
           {
             "name": "workbook1",
             "type": "Microsoft.Common.Section",
-            "label": "FortiNDR Cloud",
+            "label": "Fortinet FortiNDR Cloud",
             "elements": [
               {
                 "name": "workbook1-text",
