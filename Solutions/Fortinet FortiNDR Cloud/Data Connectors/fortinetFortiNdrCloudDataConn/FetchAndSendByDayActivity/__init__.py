@@ -3,8 +3,8 @@ import os
 from datetime import date, datetime, timedelta, timezone, time
 
 from metastream import fetch_events_by_day
+from fortiNdrCloudRestAPI import _fetch_detections_by_day
 from metastream.s3_client import Context
-from fortiNdrCloudRestAPI import _fetch_detections_by_checkpoint
 from sentinel.sentinel import post_data
 
 AWS_ACCESS_KEY = os.environ.get('AwsAccessKeyId')
@@ -43,6 +43,6 @@ def fetch_and_send_events(ctx: Context, event_type: str, start_day: datetime):
 
 
 def fetch_and_send_detections(start_day: date):
-    detections =  _fetch_detections_by_checkpoint(start_day = start_day)['detections']
-
+    detections =  _fetch_detections_by_day(start_day = start_day)['detections']
+    
     post_data(detections, 'detections')

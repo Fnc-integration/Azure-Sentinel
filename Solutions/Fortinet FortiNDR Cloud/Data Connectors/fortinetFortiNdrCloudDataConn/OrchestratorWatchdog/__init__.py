@@ -26,16 +26,19 @@ DETECTIONS = (os.environ.get("FncDetections") or "true").strip().lower() == 'tru
 TERMINATE_APP = os.environ.get("FncTerminateApp").strip().lower() == 'true'
 
 try:
-    # DAYS_TO_COLLECT = int(os.getenv("FncDaysToCollect", 0))
-    DAYS_TO_COLLECT = int(os.environ.get("FncDaysToCollect") or 0)
+    DAYS_TO_COLLECT = int(os.environ.get("FncDaysToCollect") or 7)
 except ValueError:
     DAYS_TO_COLLECT = None
 
 try:
-    # INTERVAL = int(os.getenv("FncIntervalMinutes", "5"))
     INTERVAL = int(os.environ.get("FncIntervalMinutes") or "5")
 except ValueError:
     INTERVAL = None
+    
+try:
+    POLLING_DELAY = int(os.environ.get("FncPollingDelay") or "10")
+except ValueError:
+    POLLING_DELAY = None
 
 
 def validate_configuration():
@@ -56,6 +59,9 @@ def validate_configuration():
 
     if INTERVAL is None or INTERVAL < 1 or INTERVAL > 60:
         raise InputError(f'FncIntervalMinutes must be a number 1-60')
+    
+    if POLLING_DELAY is None or POLLING_DELAY < 1 or POLLING_DELAY > 60:
+        raise InputError(f'FncPollingDelay must be a number 1-60')
 
     if DAYS_TO_COLLECT and (DAYS_TO_COLLECT < 0 or DAYS_TO_COLLECT > 7):
         raise InputError(f'FncDaysToCollect must be a number 0-7')
@@ -96,7 +102,7 @@ def create_args():
     args = {}
     args['checkpoints'] = {event_type.strip(): start_date for event_type in EVENT_TYPES}
     if DETECTIONS:
-        args['checkpoints']['detections'] = start_date
+        args['checkpoints']['detections'] = (timestamp - timedelta(minutes=(INTERVAL + POLLING_DELAY))).isoformat()
     if DAYS_TO_COLLECT:
         args['days_to_collect'] = DAYS_TO_COLLECT
 

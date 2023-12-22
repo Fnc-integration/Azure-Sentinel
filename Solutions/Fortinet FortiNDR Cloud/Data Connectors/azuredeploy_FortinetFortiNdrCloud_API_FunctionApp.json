@@ -48,6 +48,10 @@
             "type": "int",
             "defaultValue": 5
         },
+        "FncPollingDelay": {
+            "type": "int",
+            "defaultValue": 10
+        },
          "FncAccountUUID": {
             "type": "string",
             "defaultValue": "<enter the FortiNDR Cloud account UUID here>"
@@ -217,6 +221,7 @@
                           "FncTerminateApp": "[parameters('FncTerminateApp')]",
                           "FncDaysToCollect": "[parameters('FncDaysToCollect')]",
                           "FncIntervalMinutes": "[parameters('FncIntervalMinutes')]",
+                          "FncPollingDelay": "[parameters('FncPollingDelay')]",
                           "FncAccountUUID": "[parameters('FncAccountUUID')]",
                           "FncApiToken": "[parameters('FncApiToken')]",
                           "logAnalyticsUri": "[variables('LogAnalyticsUri')]",

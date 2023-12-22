@@ -1,7 +1,7 @@
 import os
-from datetime import date, datetime, timezone, time
-from typing import List, Any, Dict
+from datetime import date, datetime, timedelta, timezone, time
 import requests
+from typing import List, Any, Dict
 
 from metastream.s3_client import Context
 from metastream import _validate_start_date
@@ -9,6 +9,7 @@ from metastream import _validate_start_date
 ACCOUNT_UUID = os.environ.get('FncAccountUUID')
 API_TOKEN = os.environ.get('FncApiToken')
 MAX_DETECTIONS = 1000
+POLLING_DELAY = int(os.environ.get("FncPollingDelay") or "10")
 
 def _process_response(response: Dict[str, Any]):
     # Crete detections list
@@ -105,13 +106,13 @@ def _fetch_detections(start_day: date, end_day: date):
 
     return result
 
-def _fetch_detections_by_checkpoint(start_day: date):
+def _fetch_detections_by_day(start_day: date):
     result = _fetch_detections(start_day = start_day, end_day = datetime.combine(start_day, time.max))
     return result
     
 
 def _fetch_detections_checkpoint(context: Context, start_date: date):
-    checkpoint = datetime.now(tz=timezone.utc).replace(microsecond=0)
+    checkpoint = (datetime.now(tz=timezone.utc) - timedelta(minutes=POLLING_DELAY)).replace(microsecond=0)
     if context:
         context.checkpoint = checkpoint
     
