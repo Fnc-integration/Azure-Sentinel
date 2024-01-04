@@ -5,46 +5,51 @@ from datetime import datetime, timezone, timedelta
 from metastream import fetch_detections, fetch_events
 from metastream.s3_client import Context
 from sentinel import post_data
+from global_variables import *
 
 AWS_ACCESS_KEY = os.environ.get('AwsAccessKeyId')
-AWS_SECRET_KEY = os.environ.get('AwsSecretAccessKey')
+AWS_SECRET_KEY = os.environ.get('AwsSecretAccessKey')  # is this encrypted
 ACCOUNT_CODE = os.environ.get("FncAccountCode")
 
-def main(checkpoints: dict) -> str:
-    new_checkpoints = {}
-    for event_type, checkpoint in checkpoints.items():
-        if not checkpoints:
-            return ""
 
-        logging.info(f'FetchAndSendActivity: event: {event_type} checkpoint: {checkpoint}')
+def main(args: dict) -> str:
+    validate_args(args)
 
-        ctx = Context()
-        start_date = datetime.fromisoformat(checkpoint).replace(tzinfo=timezone.utc)
-        try:
-            if event_type == 'detections':
-                fetch_and_send_detections(ctx, event_type, start_date)
-            else:
-                fetch_and_send_events(ctx, event_type, start_date)
-                
-            current_date = datetime.now(tz=timezone.utc).date()
-            if current_date > start_date.date():
-                days_to_fetch = (current_date - start_date.date()).days - 1
-                for day in range(days_to_fetch , -1, -1):
-                    day_to_fetch = (current_date - timedelta(days=day))
-                    start_of_day = day_to_fetch.replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=timezone.utc)
-                    if event_type == 'detections':
-                        fetch_and_send_detections(ctx, event_type, start_of_day)
-                    else:
-                        fetch_and_send_events(ctx, event_type, start_of_day)
+    event_type = args.get('event_type', '')
+    checkpoint = args.get('checkpoint', '')
 
-            if ctx.checkpoint is None:
-                return ""
-            new_checkpoints[event_type] = ctx.checkpoint.isoformat()
-        except Exception as ex:
-            logging.error(f"Failure: FetchAcndSendActivity: event: {event_type} checkpoint: {checkpoint} error: {ex}")
-            new_checkpoints[event_type] = checkpoints[event_type]
+    if not checkpoint:
+        # (to consider)we could get everything from the start of the day in this case
+        return ""
 
-    return new_checkpoints
+    logging.info(
+        f'FetchAndSendActivity: event type: {event_type} checkpoint: {checkpoint}')
+
+    ctx = Context()
+    start_date = datetime.fromisoformat(
+        checkpoint).replace(tzinfo=timezone.utc)
+    try:
+        if event_type == 'detections':
+            fetch_and_send_detections(ctx, event_type, start_date)
+        else:
+            fetch_and_send_events(ctx, event_type, start_date)
+
+        new_checkpoint = ctx.checkpoint.isoformat()
+    except Exception as ex:
+        logging.error(
+            f"Failure: FetchAcndSendActivity: event: {event_type} checkpoint: {checkpoint} error: {ex}")
+        raise Exception(
+            f"Failure: FetchAcndSendActivity: event: {event_type} error: {ex}")
+
+    return new_checkpoint
+
+
+def validate_args(args: dict):
+    event_type = args.get('event_type', '')
+
+    if not event_type or not event_type in SUPPORTED_EVENT_TYPES:
+        raise AttributeError(
+            "Event type was not provided or it is not supported. Event type must be one of (Observation | Suricata | Detection).")
 
 
 def fetch_and_send_events(ctx: Context, event_type: str, start_date: datetime):
@@ -56,14 +61,13 @@ def fetch_and_send_events(ctx: Context, event_type: str, start_date: datetime):
                                access_key=AWS_ACCESS_KEY,
                                secret_key=AWS_SECRET_KEY):
         post_data(events, event_type)
-    
-    
+
 
 def fetch_and_send_detections(ctx: Context, event_type: str, start_date: datetime):
     for events in fetch_detections(context=ctx,
-                               name='sentinel',
-                               account_code=ACCOUNT_CODE,
-                               start_date=start_date,
-                               access_key=AWS_ACCESS_KEY,
-                               secret_key=AWS_SECRET_KEY):
+                                   name='sentinel',
+                                   account_code=ACCOUNT_CODE,
+                                   start_date=start_date,
+                                   access_key=AWS_ACCESS_KEY,
+                                   secret_key=AWS_SECRET_KEY):
         post_data(events, event_type)
