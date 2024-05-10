@@ -1,9 +1,10 @@
+import json
 import logging
 import os
-import json
 
-from fnc.fnc_client import FncClient
 from fnc.api.api_client import ApiContext
+from fnc.fnc_client import FncClient
+from globalVariables import INTEGRATION_NAME
 from logger import Logger
 from sentinel import post_data
 
@@ -82,27 +83,17 @@ def validate_args(args: dict):
 def add_events_to_detections(detections, detection_events):
     logging.info("Start enriching detections with events")
     for detection in detections:
-        if detection_events.get(detection["uuid"]) is not None:
-            detection["events"] = json.dumps(detection_events.get(detection["uuid"]))
-        else:
-            detection["events"] = json.dumps([])
+        detection["events"] = json.dumps(
+            detection_events.get(detection["uuid"], [])
+        )
     logging.info("Finished enriching detections with events")
 
 
 def fetch_and_send_detections(ctx: ApiContext, event_type: str, start_date: str):
-    client = (
-        FncClient.get_api_client(
-            name="sentinel-fetch-detections-history",
-            api_token=API_TOKEN,
-            logger=Logger("sentinel-fetch-detections-history"),
-        )
-        if not DOMAIN
-        else FncClient.get_api_client(
-            name="sentinel-fetch-detections-history",
-            api_token=API_TOKEN,
-            domain=DOMAIN,
-            logger=Logger("sentinel-fetch-detections-history"),
-        )
+    client = FncClient.get_api_client(
+        name=INTEGRATION_NAME,
+        api_token=API_TOKEN,
+        domain=DOMAIN
     )
     client.get_logger().set_level(level=logging.DEBUG)
     polling_args = {

@@ -1,15 +1,14 @@
 import logging
 import os
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
 
 from fnc.fnc_client import FncClient
 from fnc.metastream.s3_client import MetastreamContext
-
 from fnc.utils import str_to_utc_datetime
-from globalVariables import SUPPORTED_EVENT_TYPES, DEFAULT_BUCKET_NAME
+from globalVariables import (DEFAULT_BUCKET_NAME, INTEGRATION_NAME,
+                             SUPPORTED_EVENT_TYPES)
 from logger import Logger
 from sentinel import post_data
-
 
 AWS_ACCESS_KEY = os.environ.get("AwsAccessKeyId")
 AWS_SECRET_KEY = os.environ.get("AwsSecretAccessKey")
@@ -89,12 +88,11 @@ def fetch_and_send_events(
     end_date: datetime = None,
 ):
     client = FncClient.get_metastream_client(
-        name="sentinel-fetch-events",
+        name=INTEGRATION_NAME,
         account_code=ACCOUNT_CODE,
         access_key=AWS_ACCESS_KEY,
         secret_key=AWS_SECRET_KEY,
-        bucket=BUCKET_NAME,
-        logger=Logger("sentinel-fetch-events"),
+        bucket=BUCKET_NAME
     )
     for events in client.fetch_events(
         context=ctx, event_type=event_type, start_date=start_date, end_date=end_date
